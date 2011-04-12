@@ -9,11 +9,11 @@ module MajortomConnector
   def self.connect(id_or_base_iri = "")
     raise ArgumentError, 'Parameter must not be blank' if id_or_base_iri.blank?
     id = id_or_base_iri.match(/^http/) ? find_topic_map_id_by_base_iri(id_or_base_iri) : id_or_base_iri
-    config.merge!({:map => {:id => id}})
+    config.merge!({'map' => {'id' => id}})
   end
 
   def self.topics
-    request.run('topics', query)
+    request.run('topics')
   end
 
   def self.topic_map_id
@@ -28,7 +28,8 @@ module MajortomConnector
     request.run('ctm', query)
   end
 
-  def self.tmql(query = "")
+  def self.tmql(query)
+    Rails.logger.info config.inspect
     request.run('tmql', query)
   end
 
@@ -41,7 +42,7 @@ module MajortomConnector
   end
 
   def self.list_maps
-    request.run('topicmaps', query)
+    request.run('topicmaps')
   end
 
   def self.find_topic_map_id_by_base_iri(base_iri)
@@ -63,6 +64,3 @@ module MajortomConnector
     YAML.load_file(File.join(::Rails.root, 'config', 'majortom-server.yml'))
   end
 end
-
-#@tmql_uri = URI.parse('http://flipper.tm.informatik.uni-leipzig.de:8080/majortom-server/tm/tmql/3218a57fb4c50121b17fbb8f756afe5/')
-#@beru_uri = URI.parse('http://flipper.tm.informatik.uni-leipzig.de:8080/majortom-server/tm/beru/3218a57fb4c50121b17fbb8f756afe5/')

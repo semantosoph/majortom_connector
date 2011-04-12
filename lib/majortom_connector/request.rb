@@ -35,7 +35,8 @@ module MajortomConnector
 
     def run(command, query = "")
       raise ArgumentError, "Command #{command} not available. Try one of the following: #{const_get(:AvailableCommands).join(',')}" unless self.class.command_available?(command)
-      send(command, query)
+       return post(command, query) if %w[tmql sparql beru].include?(command)
+       return get(command, query) if %w[topics topicmaps resolvetm].include?(command)
     end
 
     def successful?
@@ -44,14 +45,16 @@ module MajortomConnector
 
     protected
 
-    def topics
+    def get(command, query = "")
+      parameter = "/#{@config['map']['id']}" if command == 'topics'
+      parameter = "?bl=#{query}" unless query.blank?
+      @result.parse(HTTParty.get("#{server_uri}/tm/#{command}#{parameter}"))
     end
 
-    def topicmaps
-    end
-
-    def resolvetm(base_iri)
-      @result.parse(HTTParty.get("#{server_uri}/tm/resolvetm?bl=#{base_iri}"))
+    def post(command, query)
+      post_options = {:body => {:query => query}}
+      @result.parse(HTTParty.post("#{server_uri}/tm/#{command}/#{@config['map']['id']}/", post_options))
+      return @result
     end
 
     def xtm
@@ -60,18 +63,6 @@ module MajortomConnector
     def ctm
     end
 
-    def tmql(query)
-      post_options = {:body => {:query => query}}
-      @result.parse(HTTParty.post("#{server_uri}/tm/tmql/#{@config[:map][:id]}/", post_options))
-      return @result
-    end
-
-    def sparql
-    end
-
-    def beru
-    end
-    
     protected
     
     def server_uri

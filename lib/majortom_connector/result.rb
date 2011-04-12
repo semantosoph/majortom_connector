@@ -28,6 +28,7 @@ module MajortomConnector
     protected
     
     def handle_jtmqr_v1
+      Rails.logger.info "V1!"
       @json = Array.new
       @data['seq'].each do |tupel|
         cells = Array.new
