@@ -1,0 +1,12 @@
+= MaJorToM-Connector
+
+This gem provides easy access to any MaJorToM-Server.
+
+== Requirements
+
+* HTTParty http://github.com/jnunemaker/httparty/ - For the HTTP requests.
+
+== Install
+
+* sudo gem install majortom_connector
+
