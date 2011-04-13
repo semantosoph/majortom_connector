@@ -10,6 +10,8 @@ This gem provides easy access to any MaJorToM-Server.
 
 * sudo gem install majortom_connector
 
+* Copy the *majortom-server.yml* from the examples folder into the config folder of your Rails app and configure it to your needs.
+
 == Documentation
 
 * You can find the JTMQR result format there: https://code.google.com/p/tmql/wiki/JTMQR
