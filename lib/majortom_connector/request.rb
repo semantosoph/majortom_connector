@@ -29,32 +29,30 @@ module MajortomConnector
     end
 
     def initialize(config)
-      @config = config
+      @mts_config = config
     end
 
     def run(command, query = "")
       raise ArgumentError, "Command #{command} not available. Try one of the following: #{const_get(:AvailableCommands).join(',')}" unless self.class.command_available?(command)
-      @result = Result.new
-      return post(command, query) if %w[tmql sparql beru].include?(command)
-      return get(command, query) if %w[topics topicmaps resolvetm].include?(command)
+      @mts_result = Result.new
+      post(command, query) if %w[tmql sparql beru].include?(command)
+      get(command, query) if %w[topics topicmaps resolvetm clearcache xtm ctm].include?(command)
+      return @mts_result
     end
 
     def successful?
-      @result.successful?
+      @mts_result.successful?
     end
 
     protected
 
     def get(command, query = "")
-      parameter = "/#{@config['map']['id']}" if command == 'topics'
-      parameter = "?bl=#{query}" unless query.blank?
-      @result.parse(HTTParty.get("#{server_uri}/tm/#{command}#{parameter}"))
+      @mts_result.parse(HTTParty.get("#{server_uri}/tm/#{command}#{parameter_builder(command, query)}"))
     end
 
     def post(command, query)
-      post_options = {:body => {:query => query}}
-      @result.parse(HTTParty.post("#{server_uri}/tm/#{command}/#{@config['map']['id']}/", post_options))
-      return @result
+      post_options = {:body => {:query => query, :apikey => @mts_config['user']['api_key']}}
+      @mts_result.parse(HTTParty.post("#{server_uri}/tm/#{command}/#{@mts_config['map']['id']}/", post_options))
     end
 
     def xtm
@@ -63,10 +61,16 @@ module MajortomConnector
     def ctm
     end
 
-    protected
-
     def server_uri
-      "#{@config['server']['host']}:#{@config['server']['port']}/#{@config['server']['context']}"
+      "#{@mts_config['server']['host']}:#{@mts_config['server']['port']}/#{@mts_config['server']['context']}"
+    end
+
+    def parameter_builder(command, query = "")
+      parameter = case command
+      when 'topics' then "/#{@mts_config['map']['id']}?"
+      when 'resolvetm' then "?bl=#{query}&"
+      else "?"
+      end << "apikey=#{@mts_config['user']['api_key']}"
     end
   end
 end

@@ -7,8 +7,6 @@ module MajortomConnector
 
     attr_reader :data
     
-    attr_reader :format
-
     attr_reader :jtmqr
     
     def successful?
@@ -39,6 +37,7 @@ module MajortomConnector
     end
     
     def handle_jtmqr_v2
+      # JTMQR v2 is currently not supported by MaJorToM-Server
     end
   end
 end

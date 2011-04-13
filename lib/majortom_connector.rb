@@ -12,32 +12,8 @@ module MajortomConnector
     config.merge!({'map' => {'id' => id}})
   end
 
-  def self.topics
-    request.run('topics')
-  end
-
   def self.topic_map_id
-    config[:map][:id] ||= ""
-  end
-
-  def self.to_xtm
-    request.run('xtm', query)
-  end
-
-  def self.to_ctm
-    request.run('ctm', query)
-  end
-
-  def self.tmql(query)
-    request.run('tmql', query)
-  end
-
-  def self.sparql(query = "")
-    request.run('sparql', query)
-  end
-
-  def self.search(query = "")
-    request.run('beru', query)
+    config['map']['id'] ||= ""
   end
 
   def self.list_maps
@@ -45,18 +21,41 @@ module MajortomConnector
   end
 
   def self.find_topic_map_id_by_base_iri(base_iri)
-    request.run('resolvetm', base_iri)
-    request.result.data
+    request.run('resolvetm', base_iri).data
+  end
+
+  def self.topics
+    request.run('topics')
+  end
+
+  def self.tmql(query)
+    request.run('tmql', query)
+  end
+
+  def self.sparql(query)
+    request.run('sparql', query)
+  end
+
+  def self.search(query = "")
+    request.run('beru', query)
+  end
+
+  def self.to_xtm
+    request.run('xtm')
+  end
+
+  def self.to_ctm
+    request.run('ctm')
   end
 
   protected
   
   def self.request
-    @request ||= Request.new(config)
+    @mts_request ||= Request.new(config)
   end
 
   def self.config
-    @config ||= load_server_config
+    @mts_config ||= load_server_config
   end
 
   def self.load_server_config

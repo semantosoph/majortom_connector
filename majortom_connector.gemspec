@@ -20,5 +20,5 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   
   s.add_dependency('httparty', '>= 0.7.4')
-  s.post_install_message = %q{You have successfully installed the majortom_connector gem.\nDon't forget to put the majortom-server.yml into rails' config folder.}
+  s.post_install_message = %q{You have successfully installed the majortom_connector gem. Don't forget to put the majortom-server.yml into rails' config folder.}
 end
