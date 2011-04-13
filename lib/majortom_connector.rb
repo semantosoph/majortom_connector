@@ -29,7 +29,6 @@ module MajortomConnector
   end
 
   def self.tmql(query)
-    Rails.logger.info config.inspect
     request.run('tmql', query)
   end
 

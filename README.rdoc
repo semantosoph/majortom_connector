@@ -10,3 +10,6 @@ This gem provides easy access to any MaJorToM-Server.
 
 * sudo gem install majortom_connector
 
+== Documentation
+
+* You can find the JTMQR result format there: https://code.google.com/p/tmql/wiki/JTMQR

@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Sven Windisch"]
   s.email       = ["sven.windisch@googlemail.com"]
-  s.homepage    = ""
+  s.homepage    = "https://github.com/semantosoph/majortom_connector"
   s.summary     = %q{Connector gem for any MaJorToM-Server}
   s.description = %q{Provides easy and configurable access to MaJorToM-Server data stores.}
 

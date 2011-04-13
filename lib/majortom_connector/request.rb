@@ -30,13 +30,13 @@ module MajortomConnector
 
     def initialize(config)
       @config = config
-      @result = Result.new
     end
 
     def run(command, query = "")
       raise ArgumentError, "Command #{command} not available. Try one of the following: #{const_get(:AvailableCommands).join(',')}" unless self.class.command_available?(command)
-       return post(command, query) if %w[tmql sparql beru].include?(command)
-       return get(command, query) if %w[topics topicmaps resolvetm].include?(command)
+      @result = Result.new
+      return post(command, query) if %w[tmql sparql beru].include?(command)
+      return get(command, query) if %w[topics topicmaps resolvetm].include?(command)
     end
 
     def successful?
@@ -64,7 +64,7 @@ module MajortomConnector
     end
 
     protected
-    
+
     def server_uri
       "#{@config['server']['host']}:#{@config['server']['port']}/#{@config['server']['context']}"
     end

@@ -9,7 +9,7 @@ module MajortomConnector
     
     attr_reader :format
 
-    attr_reader :json
+    attr_reader :jtmqr
     
     def successful?
       @code == "0" ? true : false
@@ -28,14 +28,13 @@ module MajortomConnector
     protected
     
     def handle_jtmqr_v1
-      Rails.logger.info "V1!"
-      @json = Array.new
+      @jtmqr = Array.new
       @data['seq'].each do |tupel|
         cells = Array.new
         tupel['t'].each do |c|
           cells << c[c.keys.first]
         end
-        @json << cells
+        @jtmqr << cells
       end
     end
     
