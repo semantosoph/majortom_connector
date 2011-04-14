@@ -14,9 +14,9 @@ module MajortomConnector
     end
     
     def parse (result)
-      @code = result['code']
+      @code = %w[0 200].include?(result['code']) ? "0" : result['code']  
       @message = result['msg']
-      @data = result['data']
+      @data = @code == "0" ? result['data'] : "" 
       
       if @data.kind_of?(Hash) && @data.has_key?('version')
         send("handle_jtmqr_v#{@data['version'].to_i}")

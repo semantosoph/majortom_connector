@@ -1,9 +1,10 @@
 require 'httparty'
+require 'net/http'
 
 module MajortomConnector
   class Request
 
-    AvailableCommands = [
+    AVAILABLE_COMMANDS = [
       "topics",
       "topicmaps",
       "resolvetm",
@@ -11,7 +12,8 @@ module MajortomConnector
       "ctm",
       "tmql",
       "sparql",
-      "beru"
+      "beru",
+      "clearcache"
     ]
 
     attr_reader :result
@@ -21,7 +23,7 @@ module MajortomConnector
     end
 
     def self.available_commands
-      const_get(:AvailableCommands)
+      AVAILABLE_COMMANDS
     end
 
     def self.command_available?(command)
@@ -32,11 +34,12 @@ module MajortomConnector
       @mts_config = config
     end
 
-    def run(command, query = "")
-      raise ArgumentError, "Command #{command} not available. Try one of the following: #{const_get(:AvailableCommands).join(',')}" unless self.class.command_available?(command)
+    def run(command, param = "")
+      raise ArgumentError, "Command #{command} not available. Try one of the following: #{MajortomConnector::Request.available_commands.join(', ')}" unless self.class.command_available?(command)
       @mts_result = Result.new
-      post(command, query) if %w[tmql sparql beru].include?(command)
-      get(command, query) if %w[topics topicmaps resolvetm clearcache xtm ctm].include?(command)
+      post(command, param) if %w[tmql sparql beru].include?(command)
+      get(command, param) if %w[topics topicmaps resolvetm clearcache].include?(command)
+      stream(command) if %w[xtm ctm].include?(command)
       return @mts_result
     end
 
@@ -55,10 +58,14 @@ module MajortomConnector
       @mts_result.parse(HTTParty.post("#{server_uri}/tm/#{command}/#{@mts_config['map']['id']}/", post_options))
     end
 
-    def xtm
-    end
-
-    def ctm
+    def stream(command)
+      buffer = ""
+      response = Net::HTTP.get_response(URI.parse("#{@mts_config['server']['host']}:#{@mts_config['server']['port']}/#{@mts_config['server']['context']}/tm/#{command}/#{@mts_config['map']['id']}?apikey=#{@mts_config['user']['api_key']}")) do |response|
+        response.read_body do |segment|
+          buffer << segment
+        end
+      end
+      @mts_result.parse({'code' => response.code, 'msg' => response.message, 'data' => buffer})
     end
 
     def server_uri
@@ -67,7 +74,7 @@ module MajortomConnector
 
     def parameter_builder(command, query = "")
       parameter = case command
-      when 'topics' then "/#{@mts_config['map']['id']}?"
+      when 'topics', 'clearcache' then "/#{@mts_config['map']['id']}?"
       when 'resolvetm' then "?bl=#{query}&"
       else "?"
       end << "apikey=#{@mts_config['user']['api_key']}"

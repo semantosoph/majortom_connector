@@ -47,6 +47,10 @@ module MajortomConnector
   def self.to_ctm
     request.run('ctm')
   end
+  
+  def self.clear_cache
+    request.run('clearcache')
+  end
 
   protected
   
