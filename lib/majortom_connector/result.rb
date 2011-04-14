@@ -1,43 +1,43 @@
+require 'json'
+
 module MajortomConnector
   class Result
 
+    attr_reader :http_status
+    attr_reader :http_message
+    attr_reader :http_body
+
     attr_reader :code
-
     attr_reader :message
-
     attr_reader :data
     
-    attr_reader :jtmqr
-    
-    def successful?
+    def request_successful?
+      @http_status == "200" ? true : false
+    end
+
+    def response_successful?
       @code == "0" ? true : false
     end
     
-    def parse (result)
-      @code = %w[0 200].include?(result['code']) ? "0" : result['code']  
-      @message = result['msg']
-      @data = @code == "0" ? result['data'] : "" 
-      
-      if @data.kind_of?(Hash) && @data.has_key?('version')
-        send("handle_jtmqr_v#{@data['version'].to_i}")
-      end
-    end
+    def parse(response, format = "", buffer = nil)
+      @http_status = response.code
+      @http_message = response.message
+      @http_body = response.read_body
 
-    protected
-    
-    def handle_jtmqr_v1
-      @jtmqr = Array.new
-      @data['seq'].each do |tupel|
-        cells = Array.new
-        tupel['t'].each do |c|
-          cells << c[c.keys.first]
-        end
-        @jtmqr << cells
+      return unless @http_status == "200"
+      
+      case format
+      when 'xtm', 'ctm'
+        @code = "0"
+        @data = buffer
+      when 'html'
+        @code = "0"
+      else
+        json = JSON.parse(@http_body)
+        @data = json['data']
+        @code = json['code']
+        @message = json['msg']
       end
-    end
-    
-    def handle_jtmqr_v2
-      # JTMQR v2 is currently not supported by MaJorToM-Server
     end
   end
 end

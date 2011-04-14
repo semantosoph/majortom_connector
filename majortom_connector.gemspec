@@ -19,6 +19,5 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
   
-  s.add_dependency('httparty', '>= 0.7.4')
-  s.post_install_message = %q{You have successfully installed the majortom_connector gem. Don't forget to put the majortom-server.yml into rails' config folder.}
+  s.add_dependency('json', '>= 1.5.1')
 end
