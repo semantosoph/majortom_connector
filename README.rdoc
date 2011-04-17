@@ -4,40 +4,52 @@ This gem provides easy access to any MaJorToM-Server.
 
 == Requirements
 
-* HTTParty http://github.com/jnunemaker/httparty/ - For the HTTP requests.
+* JSON for ruby - http://flori.github.com/json/
 
 == Install
 
-* sudo gem install majortom_connector
-* Copy the majortom-server.yml from the examples folder into the config folder of your Rails app and configure it to your needs.
+* sudo gem install majortom_connector (mandatory)
+* Copy the majortom-server.yml from the examples folder into the config folder of your Rails app and configure it to your needs (optional).
 
 == Usage
 
-1. Before executing any request, you must connect to the server with
-     MajortomConnector.connect "base_iri_or_map_id"
-2. Start the topic map madness.
-   * Get the _id_ of the map you are connected with
-       MajortomConnector.topic_map_id
-   * Get all maps that are on the server
-       MajortomConnector.list_maps
-   * Find the id of a map with given base locator
-       MajortomConnector.find_topic_map_id_by_base_iri(base_iri)
-   * Get all topics of the connected map*
-       MajortomConnector.topics
-   * Fire a TMQL query against the server*
-       MajortomConnector.tmql(query)
-   * Fire a SPARQL query against the server
-       MajortomConnector.sparql(query)
-   * Do a search in the fulltext index of the map that was created while loading
-       MajortomConnector.search(query)
-3. Have fun!
+This documentation describes the use of majortom_connector version 0.0.3. 
 
-Note: All methods (except those that just return ids) return a +Result+ object, that carries several values:
+1. Before executing any request, you must connect to the server with
+     c = MajortomConnector.connect "base_iri_or_map_id"
+2. In case you did not provide and edit the config/majortom-server.yml you can configure the connector by calling
+     c.config.(host|port|context|api_key|map_id) = your_value
+3. Check the completeness of your configuration with
+     c.ready?
+   or check, whether the configured server actually responds with
+     c.established?
+4. Start the topic map madness.
+   * Get the _id_ of the map you are connected with
+       c.topic_map_id
+   * Get all maps that are on the server
+       c.list_maps
+   * Find the id of a map with given base locator
+       c.find_topic_map_id_by_base_iri(base_iri)
+   * Get all topics of the connected map*
+       c.topics
+   * Fire a TMQL query against the server*
+       c.tmql(query)
+   * Fire a SPARQL query against the server
+       c.sparql(query)
+   * Do a search in the fulltext index of the map that was created while loading
+       c.search(query)
+   * Receive an XTM or CTM serialization of your map with
+       c.to_xtm and c.to_ctm
+   * In case you want to clear the query cache, you can call
+       c.clear_cache
+5. Get your data from the connector by calling
+       data = c.request.result 
+The result object has several values:
+* +http_status+, +http_message+ and +http_body+ represent the data from the HTTP response
 * +code+ says, whether all went fine (if it's 0) or not
 * +message+ has a message from the server for you ('OK' or any error message)
 * +data+ contains the actual data that was returned from the server if no error occured
-* +jtmqr+ contains the JTMQR that comes with all methods marked with * above
 
-== Documentation
+== External documentation
 
 * You can find the JTMQR result format there: https://code.google.com/p/tmql/wiki/JTMQR
