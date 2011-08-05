@@ -1,4 +1,4 @@
-require 'json'
+require 'multi_json'
 
 module MajortomConnector
   class Result
@@ -12,11 +12,11 @@ module MajortomConnector
     attr_reader :data
     
     def request_successful?
-      @http_status == "200" ? true : false
+      @http_status == "200"
     end
 
     def response_successful?
-      @code == "0" ? true : false
+      @code == "0"
     end
     
     def parse(response, format = "", buffer = nil)
@@ -33,7 +33,7 @@ module MajortomConnector
       when 'html'
         @code = "0"
       else
-        json = JSON.parse(@http_body)
+        json = MultiJson.decode(@http_body)
         @data = json['data']
         @code = json['code']
         @message = json['msg']

@@ -4,7 +4,7 @@ This gem provides easy access to any MaJorToM-Server.
 
 == Requirements
 
-* JSON for ruby - http://flori.github.com/json/
+* MultiJSON - https://github.com/intridea/multi_json
 
 == Install
 
@@ -13,7 +13,7 @@ This gem provides easy access to any MaJorToM-Server.
 
 == Usage
 
-This documentation describes the use of majortom_connector version 0.0.3. 
+This documentation describes the use of majortom_connector version 0.0.4. 
 
 1. Before executing any request, you must connect to the server with
      c = MajortomConnector.connect "base_iri_or_map_id"
